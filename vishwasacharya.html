@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <title>Circle Animation | Vishwas Acharya</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        button:active {
+            border-style: outset;
+        }
+
+        .circle-div {
+            display: flex;
+            height: 400px;
+            width: 400px;
+            margin: auto;
+            margin-top: 100px;
+        }
+
+        .circle {
+            position: fixed;
+            height: 55px;
+            width: 55px;
+            border-radius: 50px;
+        }
+
+        .red {
+            background-color: #FF4C1F;
+            margin: 30px;
+            z-index: 4;
+        }
+
+        .yellow {
+            background-color: #FFEC4F;
+            margin-top: 30px;
+            margin-left: 210px;
+            z-index: 3;
+        }
+
+        .blue {
+            background-color: #25ACF6;
+            margin-top: 270px;
+            margin-left: 90px;
+            transform: rotate(180deg);
+            transform-origin: left top;
+            z-index: 1;
+        }
+
+        .green {
+            margin-top: 272px;
+            margin-left: 265px;
+            transform: rotate(180deg);
+            background-color: #29722B;
+            transform-origin: left top;
+            z-index: 2;
+
+        }
+
+        .btn {
+            cursor: pointer;
+            margin: 5px 40px;
+            background-color: #007375;
+            padding: 5px 15px;
+            color: #fff;
+        }
+
+        .btn-div {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            margin-top: 100px;
+            margin-left: -50px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="circle-div">
+        <div class="circle red"></div>
+        <div class="circle yellow"></div>
+        <div class="circle green"></div>
+        <div class="circle blue"></div>
+    </div>
+
+    <div class="btn-div">
+        <button class="btn" id="startBtn">Start</button>
+        <button class="btn" id="stopBtn">Stop</button>
+    </div>
+
+
+
+    <script>
+        /* Adding event listener to the buttons. */
+        document.getElementById("startBtn").addEventListener("click", startAnimation);
+        document.getElementById("stopBtn").addEventListener("click", stopAnimation);
+
+        /* Declaring the constants */
+        const classes = ["Red", "Yellow", "Green", "Blue"];
+        const animationDefaults = "1.5s ease-in-out alternate infinite", delay = 1500, timeoutDelay = 3000;
+
+        /*It Creates a Style Tag for each Keyframe*/
+        for (let i = 0; i < classes.length; i++) {
+            document.head.insertAdjacentHTML("beforeend", `<style id="keyframes${classes[i]}"></style>`)
+        }
+
+        /* Created this array to change color of circle */
+        let initialRed = [
+            "#FF4C1F",
+            "#FFEC4F",
+            "#29722B",
+            "#25ACF6",
+            "#FF4C1F"
+        ];
+        let initialBlue = [
+            "#25ACF6",
+            "#FF4C1F",
+            "#FFEC4F",
+            "#29722B",
+            "#25ACF6"
+        ];
+        let initialGreen = [
+            "#29722B",
+            "#25ACF6",
+            "#FF4C1F",
+            "#FFEC4F",
+            "#29722B"
+        ];
+        let initialYellow = [
+            "#FFEC4F",
+            "#29722B",
+            "#25ACF6",
+            "#FF4C1F",
+            "#FFEC4F"
+        ];
+
+        /* This function runs when Stop Button is clicked Pausing the animation and reloading the page after 1 second. */
+        function stopAnimation() {
+            for (let i = 0; i < classes.length; i++) {
+                document.getElementsByClassName(classes[i].toLowerCase())[0].style.animationPlayState = "paused";
+            }
+            setTimeout(() => {
+                window.location.reload();
+            }, 1000);
+        }
+
+        /* The function that is called when the start button is clicked. It is responsible for starting the animation. */
+        function startAnimation() {
+            for (let i = 0; i < classes.length; i++) {
+                document.getElementsByClassName(classes[i].toLowerCase())[0].style.animation = `animation-${classes[i].toLowerCase()} ${animationDefaults}`;
+            }
+            function repTask(className, width, height, letter, setName) {
+                letter = -1;
+                (function self() {
+                    letter = (letter + 1) % 4;
+
+                    setTimeout(() => {
+                        document.getElementsByClassName(`${className.toLowerCase()}`)[0].style.backgroundColor = `${setName[letter]}`;
+                        setTimeout(self, timeoutDelay);
+                        document.getElementById(`keyframes${className}`).innerText =
+                            `
+                            @keyframes animation-${className.toLowerCase()}
+                            {
+                                100% {
+                                    background-color: ${setName[letter + 1]};
+                                    width: ${width}px;
+                                    height: ${height}px;
+                                }
+                            }
+                            `;
+                        setTimeout(() => {
+                            document.getElementsByClassName(`${className.toLowerCase()}`)[0].style.backgroundColor = `${setName[letter + 1]}`;
+                        }, delay);
+                    });
+                })()
+            }
+            repTask("Red", 235, 55, "a", initialRed);
+            repTask("Yellow", 55, 245, "b", initialYellow);
+            repTask("Blue", 55, 245, "c", initialBlue);
+            repTask("Green", 235, 55, "d", initialGreen);
+        }
+    </script>
+
+</body>
+</html>
